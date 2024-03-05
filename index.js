@@ -1,5 +1,27 @@
 const APP_ID = "7cd9b56127ce102569d7c0c7ad66548b"
 
+function onload(){
+    getGPSLocation()
+    onloadLoadPrevious()
+}
+
+function getGPSLocation(){
+    if (navigator.geolocation){
+        navigator.geolocation.getCurrentPosition((position)=>{
+            console.log(position)
+            getWeatherData([position.coords.latitude, position.coords.longitude])
+        })
+    }
+    else {
+        console.error("Geolocation not supported")
+    }
+}
+
+function onloadLoadPrevious(){
+    const weather = JSON.parse(localStorage.getItem("weather_request"))
+    displayWeather(weather)
+}
+
 // find the city's location using the geocaching api
 async function searchCity(){
     // get location
@@ -12,15 +34,20 @@ async function searchCity(){
     populateSelector(cities)
 }
 // find the weather of the selected city
-async function findWeather(){
+function findWeather(){
     const locationElement = document.querySelector("select#citynamedropdown")
     const location = locationElement.value.split(" ")
     console.log(location)
 
-    const weather = await request(`https://api.openweathermap.org/data/2.5/weather?lat=${location[0]}&lon=${location[1]}&appid=${APP_ID}&units=metric`)
-    displayWeather(weather)
+    getWeatherData(location)
 }
 // display it
+
+async function getWeatherData(location){
+    const weather = await request(`https://api.openweathermap.org/data/2.5/weather?lat=${location[0]}&lon=${location[1]}&appid=${APP_ID}&units=metric`)
+    localStorage.setItem("weather_request", JSON.stringify(weather))
+    displayWeather(weather)
+}
 
 function displayWeather(weather){
     const weatherDiv = document.querySelector("div#infometeo")
