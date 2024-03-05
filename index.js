@@ -1,4 +1,4 @@
-const APP_ID = "7cd9b56127ce102569d7c0c7ad66548b"
+const APP_ID = "" // please provide your own openweathermap token
 
 function onload(){
     getGPSLocation()
@@ -19,6 +19,7 @@ function getGPSLocation(){
 
 function onloadLoadPrevious(){
     const weather = JSON.parse(localStorage.getItem("weather_request"))
+    if (!weather) return
     displayWeather(weather)
 }
 
